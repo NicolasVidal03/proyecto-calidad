@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-index.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/principal.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='logo.ico')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/correcciones.css')}}">
+    <title>Tio Elian's</title>
+    
+</head>
+<body>
+    <header>
+        <div class="arriba">
+            <div class="logo">
+                <img src="{{url_for('static', filename='logoEliana.png')}}" alt="Tio Elian's" width="100%" />
+            </div>
+            <div class="buscador">
+                <input type="search" aria-label="Search" aria-activedescendant autocomplete="off" class="buscar">
+                <input type="image" src="{{url_for('static', filename='icone-loupe-noir.png')}}" class="img_buscar">
+            </div>
+            <a href="/"><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Cerrar</div>
+                    <div class="img_div2">Sesion</div>
+                </div>
+            </div></a>
+            <a href=""><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Ver</div>
+                    <div class="img_div2">Cuenta</div>
+                </div>
+            </div></a>
+            <div class="imagenes">
+                <img src="{{url_for('static', filename='cart.png')}}" alt="Carrito" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Carrito</div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="abajo">
+            <div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="principal">
+            <div class="cabecera-fake"></div>
+            <div class="titulo-principal">Resultado de la búsqueda</div>
+            <div class="cuerpo">
+                <div class="cuerpo-filas">
+                    {% for producto in productosBuscadosRecibidos %}
+                        <div>
+                            <img src="{{url_for('static', filename='sp1.jpg')}}" alt="">
+                            <div class="product-nombre">{{producto.nombre}}</div>
+                            <div class="product-precio">{{producto.precio}}$</div>
+                            <div><a href="/verDetalleDeProducto/{{ producto._id }}"><button class="btn btn-primary">Ver Detalle</button></a></div>
+                        </div>
+                    {% endfor %}
+                    </div>
+            </div>
+            
+            {% if correoClienteRecibido != "admin" %}
+                <a href="/index">Volver al menu cliente</a>
+    {% endif %}
+                
+    {% if correoClienteRecibido == "admin" %}
+                <a href="/indexAdmin">Volver al menu admin</a>
+    {% endif %}
+            
+            
+        </div>
+    </main>
+    <footer>
+        <div>
+            ESTO ES EL FOOTER
+        </div>
+        <div>
+            ESTO ES EL SEGUNDO FOOTER
+        </div>
+        <div>
+            © 2022 Tio Elian's All Rights Reserved
+        </div>
+    </footer>
+</body>
+</html>

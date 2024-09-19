@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-agregar.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='logo.ico')}}">
+    <title>Editar Producto</title>
+</head>
+<body>
+
+    <div class="principal">
+        <h1>Editar Producto</h1>
+        <form action = "http://127.0.0.1:5000/modificadorDeProductoEnCatalogo" method = "POST">
+            <div class="inputs">
+            <input type = "hidden" name = "ip" value="{{productoRecibidoModificar._id}}">
+                <div>
+                    <span>Ingrese el nombre del producto: </span>
+                    <input type="text" class="username" name="np" value="{{productoRecibidoModificar.nombre}}">
+                </div>
+                <div>
+                    <span>Ingrese la categoria del producto: </span>
+                    <select name="cp" id="">
+                        {% for categoria in categoriasRecibidas %}
+                            <option>{{categoria}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <span>Ingrese el precio del producto: </span>
+                    <input type="number" name="pp" value="{{productoRecibidoModificar.precio}}">
+                </div>
+                <div>
+                    <span>Ingrese la descripción del producto: </span>
+                    <input type="text" name="dp" value="{{productoRecibidoModificar.descripcion}}">
+                </div>
+                <div>
+                    <span>Ingrese la url de la imagen del producto: </span>
+                    <input type="text" name="up" value="{{productoRecibidoModificar.url}}">
+                </div>
+            </div>
+            <div>
+                <button type="submit" value="Enviar">Enviar</button>
+            </div>
+        </form>
+        <a href="javascript: history.go(-1)">Cancelar la modificacion y volver a los productos</a>
+    </div>
+</body>
+</html>

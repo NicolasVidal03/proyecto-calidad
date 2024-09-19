@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/fonts/icomoon/style.css')}}">
+
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/owl.carousel.min.css')}}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/bootstrap.min.css')}}">
+    
+    <!-- Style -->
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/style.css')}}">
+
+    <title>Lista de clientes registrados</title>
+  </head>
+  <body>
+  
+
+  <div class="content">
+    
+    <div class="container">
+      <div style="padding-top: 3rem;">
+        {% if correoClienteRecibido != "admin" %}
+                <a href="/index">Volver al menu cliente</a>
+        {% endif %}
+
+        {% if correoClienteRecibido == "admin" %}
+                <a href="/indexAdmin">Volver al menu admin</a>
+        {% endif %}
+    </div>
+      <h2 class="mb-5">Clientes de Tio Elian's</h2>
+
+        
+      <div class="table-responsive custom-table-responsive">
+
+        <table class="table custom-table">
+          <thead>
+            <tr>  
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellido</th>
+              <th scope="col">Email</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Celular</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in clientes %}
+                <tr scope="row">
+                  <td>
+                    {{item.nombre}}
+                  </td>
+                  <td>
+                    <a href="/verCuenta/{{ item._id }}">
+                        {{item.apellido}}
+                    </a>
+                  </td>
+                  <td>
+                    {{item.email}}
+                  </td>
+                  <td>{{item.estadoDeCuenta}}</td>
+                  <td>{{item.celular}}</td>
+                </tr>
+                <tr class="spacer"><td colspan="100"></td></tr>
+            {% endfor %}           
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+
+  </div>
+    
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/principal.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-carrito.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='logo.ico')}}">
+    <title>Carrito</title>
+</head>
+<body>
+    <header>
+        <div class="arriba">
+            <div class="logo">
+                <img src="{{url_for('static', filename='logoEliana.png')}}" alt="Tio Elian's" width="100%" />
+            </div>
+            <div class="buscador">
+                <input type="search" aria-label="Search" aria-activedescendant autocomplete="off" class="buscar">
+                <input type="image" src="{{url_for('static', filename='icone-loupe-noir.png')}}" class="img_buscar">
+            </div>
+            <a href=""><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Cerrar</div>
+                    <div class="img_div2">Sesion</div>
+                </div>
+            </div></a>
+            <a href=""><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Ver</div>
+                    <div class="img_div2">Cuenta</div>
+                </div>
+            </div></a>
+            <div class="imagenes">
+                <img src="{{url_for('static', filename='cart.png')}}" alt="Carrito" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Carrito</div>
+
+                </div>
+            </div>
+        </div>
+        <div class="abajo">
+            <div>
+                
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="principal">
+            <div class="cabecera-fake"></div>
+            <div class="mostrar-carrito">
+                <div class="carrito-cabecera">
+                    <div class="carrito-titulo">Carrito de Compras</div>
+                    <div><a href="/vaciarCarrito" class="eliminar">Eliminar Todos</a></div>
+                </div>
+                <div class="carrito-cuerpo">
+                    {% for producto in productosRecibidos %}
+                    <div class="producto">
+                        <div>
+                            <img src="/sources/sp1.jpg" alt="">
+                        </div>
+                        <div>
+                            <div class="nom">{{producto.nombre}}</div>
+                            <div class="cat">{{producto.categoria}}</div>
+                        </div>
+                        <div>
+                            {{producto.cantidad}}
+                        </div>
+                        <div class="elim-precio">
+                            <div class="precio">{{producto.subtotal}}</div>
+                            <div ><a href="/eliminarDeCarrito/{{producto.idProducto}}" class="eliminar">Eliminar</a></div>
+                        </div>
+                    </div>
+                    {% endfor %}       
+                </div>
+                <div class="carrito-footer">
+                    <div class="total">Total: {{totalAPagar}}</div>
+                    <div><a href="/checkOut/{{totalAPagar}}"><button  class="btn-aniadir">Comprar</button></a></div>
+                    <div><a href="javascript:history.back()"> Volver Atrás</a></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

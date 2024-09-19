@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    
+    
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/principal.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-producto.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='logo.ico')}}">
+    <script src="{{url_for('static', filename='/assets/js/push.min.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .btn-warning.glow-button {
+            --box-shadow-color: #ffc107;
+        }   
+        .glow-button {
+          --box-shadow-color: black;
+          box-shadow: 0 0 30px var(--box-shadow-color);
+        }
+    </style>
+    <title>{{productoRecibido.nombre}}</title>
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/correcciones.css')}}">
+</head>
+<body>
+    <header>
+        <div class="arriba">
+            <div class="logo">
+                <img src="{{url_for('static', filename='logoEliana.png')}}" alt="Tio Elian's" width="100%" />
+            </div>
+            <div class="buscador">
+                <input type="search" aria-label="Search" aria-activedescendant autocomplete="off" class="buscar">
+                <input type="image" src="{{url_for('static', filename='icone-loupe-noir.png')}}" class="img_buscar">
+            </div>
+            <a href="/"><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Cerrar</div>
+                    <div class="img_div2">Sesion</div>
+                </div>
+            </div></a>
+            <a href=""><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Ver</div>
+                    <div class="img_div2">Cuenta</div>
+                </div>
+            </div></a>
+            <div class="imagenes">
+                <img src="{{url_for('static', filename='cart.png')}}" alt="Carrito" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Carrito</div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="abajo">
+            <div>
+                
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="cabecera-fake"></div>            
+        <div class="principal">
+            <div><img src="{{url_for('static', filename='sp3.jpeg')}}" alt="" class="img-principal"></div>
+            <div class="producto">
+                <h1 style="text-align: center;"><strong>{{productoRecibido.nombre}}</strong></h1>
+            
+                
+                <h4>Precio: {{productoRecibido.precio}}</h4>
+                <h4>Categoria: {{productoRecibido.categoria}}</h4>
+                <div>
+                    <h4>Descripcion: {{productoRecibido.descripcion}}</h4>
+                </div>
+                {% if estaEnCarrito != 0 %}
+                    <div><h1>Producto ya agregado al carrito</h1></div>
+                    <div class="btn-cuerpo">
+                        <div><a href="/eliminarDeCarrito/{{productoRecibido._id}}"><button class="btn btn-primary"> Quitar del carrito</button></a></div>
+                        <div><a href="/verCarrito"><button class="btn btn-primary">Ver Carrito</button></a></div>
+                    </div>
+                    <!--<button type="button" class="btn btn-lg glow-button btn-warning">Agregar a carrito</button>-->
+                {% else %}
+                <form action="/aniadirACarrito/{{productoRecibido._id}}/{{productoRecibido.precio}}" method="POST">
+                    <div>
+                        Cantidad: <input type="number" id="quantity" name="cant" min="1" max="999" class="inp-number" value="1">
+                    </div>
+                    <div>
+                        <!--<button class="btn btn-primary">Agregar a carrito</button>-->
+                        <button class="btn glow-button btn-warning">Agregar a carrito</button>
+                    </div>
+                </form>
+
+                {% endif %}
+                
+        
+                {% if correoClienteRecibido != "admin" %}
+                <a href="/index">Volver al menu cliente</a>
+                
+                <div>
+                    <br>
+                    <br>
+                    <br>
+                    <button class="btn btn-success">
+                        <a href="/agregarProductoAFavs/{{ productoRecibido._id }}" style="color:white">Agregar a favoritos</a>
+                    </button>
+                    <button class="btn btn-danger">
+                        <a href="/eliminarDeFavs/{{ productoRecibido._id }}" style="color:white">Eliminar de favoritos</a>
+                    </button>
+                </div>
+                {% endif %}
+                
+                {% if correoClienteRecibido == "admin" %}
+                <a href="/indexAdmin">Volver al menu admin</a>
+                <div>
+                    <br>
+                    <br>
+                    <br>
+                    <button class="btn btn-success">
+                        <a href="/agregarProductoAFavs/{{ productoRecibido._id }}" style="color:white">Agregar a favoritos</a>
+                    </button>
+                    <button class="btn btn-danger">
+                        <a href="/eliminarDeFavs/{{ productoRecibido._id }}" style="color:white">Eliminar de favoritos</a>
+                    </button>
+                </div>
+                {% endif %}
+                
+                
+            </div>
+        </div>
+        {% if error %}
+        <div class="container">
+            <div class="alert alert-danger alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>Ojito!</strong> {{message}}
+            </div>
+          </div>
+        {% endif %}
+        {% if exito %}
+            <div class="container">
+                <div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Exito!</strong> {{message}}
+                </div>
+            </div>
+        {% endif %}
+        {% if info %}
+        <div class="container">
+            <div class="alert alert-info alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Info!</strong> {{message}}
+            </div>
+        </div>
+        {%  endif  %}
+    </main>
+    
+   
+    <footer>
+        <div>
+            ESTO ES EL FOOTER
+        </div>
+        <div>
+            ESTO ES EL SEGUNDO FOOTER
+        </div>
+        <div>
+            © 2022 Tio Elian's All Rights Reserved
+        </div>
+    </footer>
+</body>
+</html>

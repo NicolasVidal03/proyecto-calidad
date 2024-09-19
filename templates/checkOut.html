@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-checkOut.css')}}">
+    <link rel="shortcut icon" href="sources/logo.ico" type="image/ico">
+    <title>Login</title>
+</head>
+<body>
+    
+    <div class="principal">
+        <div>
+            <img src="{{url_for('static', filename='logoEliana.png')}}" alt="Tio Elian's"/>
+        </div>
+        <h2>Sus datos:</h2>
+        <form action="/realizarPedido/{{total}}" method="POST">
+        <div class="cuerpo">
+            <div class="datos-usuario">
+                <div><span class="tit">Nombre: </span> <span> {{resumenPedido.nombre}}</span></div>
+                <div><span class="tit">Apellido: </span> <span> {{resumenPedido.apellido}}</span></div>
+                <div><span class="tit">Email: </span> <span> {{resumenPedido.email}}</span></div>
+                <div><span class="tit">Direccion: </span> <span> {{resumenPedido.direccion}}</span></div>
+                <div><span class="tit">Celular: </span> <span> {{resumenPedido.celular}}</span></div>
+            </div>
+            <div class="inputs">
+                <div class="box">
+                    <div><span>Alguna nota para el pedido: </span></div>
+                    <div><input type="text" name="nt"></div>
+                </div>
+                <div class="box">
+                    <div><span>Ingrese un metodo de pago:</span></div>
+                    <div><input type="text" name="mp" ></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="btn">
+            <button type="submmit" value="Realizar Pedido">Realizar Pedido</button>
+        </div>
+        </form>
+        <a href="javascript:history.back()"> Volver al carrito</a>
+        
+        
+        
+    </div>
+    
+</body>
+</html>

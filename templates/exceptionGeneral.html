@@ -1,0 +1,71 @@
+<link href="https://fonts.googleapis.com/css?family=Encode+Sans+Semi+Condensed:100,200,300,400" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/style2.css')}}">
+
+    <!--===============================================================================================-->
+
+<style>
+    .atras{
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    color: black;
+    font-weight: bolder;
+    border-radius: 1rem;
+    text-decoration: none;
+    
+    
+}
+.miatras {
+	  text-decoration: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    color: rgb(82, 150, 201);
+    font-weight: bolder;
+    border-radius: 1rem;
+	}
+  .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 15%;
+}
+</style>
+
+<body class="loading">
+    <div>
+        <a class="miatras" href="javascript: history.go(-1)">Atrás</a>
+    </div>
+  <h1>Error 3.14159265359</h1>
+  <h2>{{error}} <b>:(</b></h2>
+  <div class="gears">
+    <div class="gear one">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear two">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear three">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div>
+      <img src="{{url_for('static', filename='/assets/images/gif.gif')}}" width="200" height="240"class="center">
+    </div>
+  </div>
+</div>
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="{{url_for('static', filename='assets/main.js')}}" type="text/javascript"></script>
+</body>

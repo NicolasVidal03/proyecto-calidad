@@ -1,0 +1,96 @@
+body{
+    background-color: rgba(0,112,221,255);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+img{
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 1rem 10rem 1rem 10rem;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+}
+.principal{
+    background-color: white;
+    padding: 3rem 3rem 3rem 3rem;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 60vh;
+    width: 70vw;
+}
+
+input{
+    width: 10rem;
+    height: 1.3rem;
+    border-radius: 10px;
+    border: 1px solid;
+    padding-left: 0.4rem;
+}
+
+
+button{
+    height: 2rem;
+    width: 5rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border: transparent;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    width: 10rem;
+    margin-bottom: 10px;
+}
+button:hover{
+    background-color: #248dff;
+    transform: scale(1.2);
+}
+
+.registro{
+    padding-top: 3rem;
+    font-size: small;
+}
+
+.cuerpo{
+    width: 60vw;
+    display: flex;
+    justify-content: space-around;
+}
+
+.atras{
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+}
+.box{
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+    font-size: large;
+    width: 17rem;
+    align-items: center;
+}
+.box div span{
+    font-weight: 600;
+}
+span{
+    font-size: 1.2rem;
+}
+.tit{
+    font-weight: 600;
+}
+.datos-usuario div{
+    
+    padding-bottom: 5px;
+}
+.btn{
+    display:flex;
+    justify-content:center;
+    
+}

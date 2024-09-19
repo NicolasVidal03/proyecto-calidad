@@ -1,0 +1,107 @@
+header{
+    height: 15vh;
+}
+.arriba{
+    height: 100%;
+}
+main{
+    align-items: center;
+    flex-basis: 0%;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+.principal{
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    background-color: rgba(231,241,253,255);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.mostrar-carrito{
+    background-color: rgb(255, 255, 255);
+    width: 80%;
+    padding: 1rem 2rem 1rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.carrito-cabecera{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 2rem;
+}
+
+.producto{
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    padding-bottom: 1rem;
+}
+
+.producto img{
+    height: 8rem;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.carrito-footer{
+    width: 60%;
+    margin-left: 30%;
+    border-top:1px black solid;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-top: 0.3rem;
+    padding-right: 0.5rem;
+}
+.carrito-footer div{
+    padding-bottom: 0.5rem;
+}
+
+.carrito-titulo{
+    color: rgba(90, 90, 90, 0.692);
+    font-weight: 550;
+}
+.nom{
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+}
+.cat{
+    font-size: small;
+    color: rgb(153, 153, 153);
+}
+.precio{
+    font-size:1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+.eliminar{
+    color: rgba(214, 0, 0, 0.877);
+    text-decoration: underline;
+    font-size: smaller;
+}
+.elim-precio{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.total{
+    font-weight: 700;
+    font-size: x-large;
+}
+.btn-aniadir{
+    width: 8rem;
+    height: 1.5rem;
+    border-radius: 9px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.btn-aniadir:hover{
+    transform: scale(1.2);
+    background-color: #248dff;
+}

@@ -1,0 +1,12 @@
+[workspace]
+restore_data_on_startup = True
+save_data_on_exit = True
+save_history = True
+save_non_project_files = False
+project_type = empty-project-type
+recent_files = ['app.py', 'templates\\indexAdmin.html', 'templates\\index.html', 'templates\\success.html', 'templates\\modificarProducto.html', 'templates\\login.html', 'templates\\nuevaCuenta.html', 'templates\\productosPorCategoria.html', 'templates\\principal.html', 'templates\\verDetalleDeProducto.html', 'templates\\crearProductoEnCatalogo.html', 'templates\\successCarrito.html', 'templates\\carritoDeProductos.html', 'templates\\inicio.html', 'static\\assets\\principal.css', 'static\\assets\\style-index.css', 'static\\assets\\correcciones.css', 'static\\assets\\style-succes.css', 'static\\assets\\style-carrito.css', 'templates\\checkOut.html', 'static\\assets\\style-checkOut.css', 'templates\\verCuenta.html', 'static\\assets\\style-agregar.css', 'templates\\productosBuscados.html']
+
+[main]
+version = 0.2.0
+recent_files = []
+

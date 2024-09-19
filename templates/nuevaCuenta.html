@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='assets/style-signin2.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<!--===============================================================================================-->	
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<!--===============================================================================================-->	
+<!--===============================================================================================-->
+    
+    <title>Login</title>
+    <style>
+        .mine{
+            padding: 15px 15px;
+        }
+        .containere {
+	  background-image: url("{{url_for('static', filename='assets/images/singin2Blurr.jpg')}}");
+      background-size: cover;
+	  height: 100%;
+	  width: 100%;
+      display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 2rem 2rem 2rem;
+	}
+    .mod{
+        padding-left: 7rem;
+    }
+    </style>
+</head>
+    <body class="containere">
+        <div class="atras">
+            <a href="javascript: history.go(-1)">Atrás</a>
+        </div>
+        <form action = "/actionRegistrarCuenta" method = "POST" class="needs-validation" novalidate>
+            <div class="principal">
+                <div class="inputs">
+                    <table >
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="validationCustom01" class="form-label">Nombre</label>
+                                </div>   
+                                <input type="text" class="form-control mine" placeholder="Nombre" name="nombre" id="validationCustom01" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>
+                                        Apellido
+                                    </label>
+                                </div>   
+                                <input type="text" class="form-control mine" placeholder="Apellido" name="apellido">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>
+                                        Correo
+                                    </label>
+                                </div>   
+                                <input type="text" class="form-control mine" placeholder="E-mail" name="email">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>
+                                        Contraseña
+                                    </label>
+                                </div>   
+                                <input type="password" class="form-control mine" placeholder="Contraseña" name="contrasenia">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>
+                                        Celular
+                                    </label>
+                                </div>   
+                                <input type="tel" class="form-control mine" placeholder="Celular" name="celular">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>
+                                        Dirección
+                                    </label>
+                                </div>   
+                                <input type="text" class="form-control mine" placeholder="Dirección" name="direccion">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="container-login100-form-btn">
+                        <div class="mod">
+                            <button type = "submit" class="btn btn-primary">Sign In </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+    </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/style-index.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/principal.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='logo.ico')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='../static/assets/correcciones.css')}}">
+    <title>Tio Elian's</title>
+</head>
+<body>
+    <header>
+        <div class="arriba">
+            <div class="logo">
+                <img src="{{url_for('static', filename='/assets/images/logo1.png')}}" alt="Tio Elian's" width="100%" />
+            </div>
+            <form action = "http://127.0.0.1:5000//buscar" method = "POST">
+            <div class="buscador">
+                <input type="search" aria-label="Search" aria-activedescendant autocomplete="off" class="buscar" name="vb">
+                <input type="image" src="{{url_for('static', filename='icone-loupe-noir.png')}}" class="img_buscar">
+    
+            </div>
+            </form>
+            <a href="/"><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Cerrar</div>
+                    <div class="img_div2">Sesion</div>
+                </div>
+            </div></a>
+            <a href="/verMiCuenta"><div class="imagenes">
+                <img src="{{url_for('static', filename='sign_in2.png')}}" alt="Sign In" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Ver</div>
+                    <div class="img_div2">Cuenta</div>
+                </div>
+            </div></a>
+            <div class="imagenes">
+                <img src="{{url_for('static', filename='cart.png')}}" alt="Carrito" width="30px" height="auto">
+                <div>
+                    <div class="img_div1">Carrito</div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="abajo">
+            <div>
+                <select  class="form-select" onchange="location.href=this.options[this.selectedIndex].value" name="elige" size="1" aria-label="Default select example"> 
+                    <option value="" disabled selected>--Categorias--</option>
+                    {% for categoria in categorias %}
+                    <option value="/productosPorCategoria/{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="principal">
+            <div class="cabecera-fake"></div>
+            <div class="slider-frame">
+                <ul>
+                    {% for producto in productosMasVendidos %}
+                    <li>
+                        <img src="{{url_for('static', filename='sp1.jpg')}}" alt="">
+                        <span>{{producto.nombre}}</span>
+                        <a href="/verDetalleDeProducto/{{ producto._id }}" ><button class="btn btn-primary">Ver Detalle</button></a>
+                    </li>
+                    {% endfor %}
+                
+                </ul>
+            </div>
+            <div class="cuerpo">
+            <h2>Productos mas comprados</h2>
+                <div class="cuerpo-filas">
+                {% for producto in productosMasComprados %}
+                    <div>
+                        <img src="{{url_for('static', filename='sp1.jpg')}}" alt="">
+                        <div class="product-nombre">{{producto.nombre}}</div>
+                        <div class="product-precio">{{producto.precio}}$</div>
+                        <div><a href="/verDetalleDeProducto/{{ producto._id }}"><button class="btn btn-primary">Ver detalles</button></a></div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <div class="cuerpo">
+            <h2>Todos los productos</h2>
+                <div class="cuerpo-filas">
+                {% for producto in productosRecibidosTodos %}
+                    <div>
+                        <img src="{{url_for('static', filename='sp1.jpg')}}" alt="">
+                        <div class="product-nombre">{{producto.nombre}}</div>
+                        <div class="product-precio">{{producto.precio}}$</div>
+                        <div><a href="/verDetalleDeProducto/{{ producto._id }}"><button class="btn btn-primary">Ver Detalle</button></a></div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div>
+            ESTO ES EL FOOTER
+        </div>
+        <div>
+            ESTO ES EL SEGUNDO FOOTER
+        </div>
+        <div>
+            © 2022 Tio Elian's All Rights Reserved
+        </div>
+    </footer>
+</body>
+</html>
