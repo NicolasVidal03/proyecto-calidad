@@ -11,12 +11,14 @@ from flask import Flask, render_template, request, redirect, url_for,session
 from bson import ObjectId
 from pymongo import MongoClient
 from bson.son import SON
-
+from dotenv import load_dotenv
 
 
 from datetime import datetime
 import os
 
+
+load_dotenv()
 app = Flask(__name__)
 categoriasDelPrograma=["Lacteos","Bebida","Cereales","Galleta"]
 client = MongoClient("mongodb://localhost:27017")
@@ -25,8 +27,8 @@ usuarios = db["Usuarios"]
 productos=db["Productos"]
 pedidos=db["Pedidos"]
 carrito=db["Carrito"]
-app.secret_key = 'fsdhjfjdshfjksdhgsdh'
 
+app.config['key'] = os.getenv('key')
 
 ##############
 class JSONEncoder(json.JSONEncoder):
