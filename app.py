@@ -28,7 +28,8 @@ productos=db["Productos"]
 pedidos=db["Pedidos"]
 carrito=db["Carrito"]
 
-app.config['key'] = os.getenv('key')
+app.config[os.getenv('valor')] = os.getenv('key')
+
 
 ##############
 class JSONEncoder(json.JSONEncoder):
