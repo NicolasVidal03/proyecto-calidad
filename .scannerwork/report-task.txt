@@ -1,6 +1,6 @@
-projectKey=proyecto-calidad
+projectKey=proyecto-final-bdd2
 serverUrl=http://localhost:9000
 serverVersion=10.6.0.92116
-dashboardUrl=http://localhost:9000/dashboard?id=proyecto-calidad
-ceTaskId=0c33aba6-8f00-4970-bd08-ae1b83050f46
-ceTaskUrl=http://localhost:9000/api/ce/task?id=0c33aba6-8f00-4970-bd08-ae1b83050f46
+dashboardUrl=http://localhost:9000/dashboard?id=proyecto-final-bdd2
+ceTaskId=a4f0ecfd-22f5-478d-9a50-ca32135e5c3e
+ceTaskUrl=http://localhost:9000/api/ce/task?id=a4f0ecfd-22f5-478d-9a50-ca32135e5c3e
