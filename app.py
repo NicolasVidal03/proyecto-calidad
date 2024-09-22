@@ -30,6 +30,36 @@ carrito=db["Carrito"]
 
 app.config[os.getenv('valor')] = os.getenv('key')
 
+exception_html = "exceptionGeneral.html"
+indexAdmin_html = "indexAdmin.html"
+index_html = "index.html"
+detalleProducto_html = "verDetalleDeProducto.html"
+success_html = "success.html"
+
+union_categoria = "$union.categoria"
+detalle_pedido = "$detallePedido"
+project_call = "$project"
+id_producto = "$detallePedido.idProducto"
+id_cliente = "_id.idCliente"
+agrupar = "$group"
+ordenar = "$sort"
+union_nombre = "$union.nombre"
+id_usuario = "$idUsuario"
+pedido_cantidad = "$detallePedido.cantidad"
+unir = "$union"
+filtrar = "$match"
+unir_descripcion = "$union.descripcion"
+descomponer_array = "$unwind"
+unir_precio = "$union.precio"
+unir_id = "$union._id"
+combinar_coleciones = "$lookup"
+id_producto_usuario = "$_id.idProducto"
+id_producto_dentro = "_id.idProducto"
+llamado_productos = "$productos"
+llamado_id_productos = "productos.idProducto"
+productos_subtotal = "$productos.subtotal"
+limite = "$limit"
+
 
 ##############
 class JSONEncoder(json.JSONEncoder):
@@ -50,19 +80,19 @@ def actionRegistrarCuenta():
     celular = request.values.get("celular")
     direccion = request.values.get("direccion")
     if nombre == "" or apellido=="" or email == "" or contrasenia == "" or celular == "" or direccion == "":
-        return render_template('exceptionGeneral.html', error = "Debes llenar todos los campos")
+        return render_template(exception_html, error = "Debes llenar todos los campos")
     else:
         print("CELULAR CELULAR CELULAR")
         print(celular.isdigit())
         if celular.isdigit() == True:
             resultado = usuarios.find_one({"email":email})
             if resultado:
-                return render_template('exceptionGeneral.html', error = "Ya existe una cuenta con ese correo")
+                return render_template(exception_html, error = "Ya existe una cuenta con ese correo")
             else:
                 usuarios.insert_one({ "nombre":nombre,  "apellido":apellido, "direccion":direccion,"email":email, "contrasenia":contrasenia, "estadoDeCuenta":True, "celular":celular, "favoritos": []})
                 return render_template('inicio.html')
         else:
-            return render_template('exceptionGeneral.html', error = "El numero de telefono debe tener digitos")
+            return render_template(exception_html, error = "El numero de telefono debe tener digitos")
             
     
     
@@ -78,10 +108,10 @@ def validarCuenta():
         idUsuario = JSONEncoder().encode(idUsr)
         session["idUser"] = idUsuario
         productosSolicitadosTodos=list(db.Productos.find())
-        return render_template('indexAdmin.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos)
+        return render_template(indexAdmin_html,categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos)
     else:
         if email == "" or contrasenia =="":
-            return render_template('exceptionGeneral.html', error = "Debes llenar todos los campos")
+            return render_template(exception_html, error = "Debes llenar todos los campos")
         else:
             resultado = usuarios.find_one( {"email":email, "contrasenia":contrasenia })
             if resultado:
@@ -98,11 +128,11 @@ def validarCuenta():
                 idCliente = consultaCliente[0].get('_id')
                 
                 productosSolicitadosTodos=list(db.Productos.find())
-                pipeline=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idCliente":"$idUsuario","idProducto":"$detallePedido.idProducto"},"cantidadProductosPedidosPorUsuario":{"$sum":"$detallePedido.cantidad"}}},{"$match":{"_id.idCliente":ObjectId(idCliente)}},{"$sort":SON([("cantidadProductosPedidosPorUsuario",-1)])},{"$project":{"_idProductosFavs":"$_id.idProducto","_id":0}},{"$lookup":{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+                pipeline=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idCliente":id_usuario,"idProducto":id_producto},"cantidadProductosPedidosPorUsuario":{"$sum":pedido_cantidad}}},{filtrar:{id_cliente:ObjectId(idCliente)}},{ordenar:SON([("cantidadProductosPedidosPorUsuario",-1)])},{project_call:{"_idProductosFavs":id_producto_usuario,"_id":0}},{combinar_coleciones:{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
                 productosSolicitadosMasComprados=list(db.Pedidos.aggregate(pipeline))
-                pipeline2=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idProducto":"$detallePedido.idProducto"},"cantidadVecesPedido":{"$sum":"$detallePedido.cantidad"}}},{"$sort":SON([("cantidadVecesPedido",-1)])},{"$limit":9},{"$lookup":{"from":"Productos","localField":"_id.idProducto","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+                pipeline2=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idProducto":id_producto},"cantidadVecesPedido":{"$sum":pedido_cantidad}}},{ordenar:SON([("cantidadVecesPedido",-1)])},{limite:9},{combinar_coleciones:{"from":"Productos","localField":id_producto_dentro,"foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
                 productosSolicitadosMasVendidos=list(db.Pedidos.aggregate(pipeline2))
-                return render_template('index.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
+                return render_template(index_html,categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
             else:
                # print("el correo y/o la contrasenia son incorrectos")
                 return render_template('noEncontrado.html')
@@ -115,25 +145,25 @@ def index():
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
     productosSolicitadosTodos=list(db.Productos.find())
-    pipeline=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idCliente":"$idUsuario","idProducto":"$detallePedido.idProducto"},"cantidadProductosPedidosPorUsuario":{"$sum":"$detallePedido.cantidad"}}},{"$match":{"_id.idCliente":ObjectId(idCliente)}},{"$sort":SON([("cantidadProductosPedidosPorUsuario",-1)])},{"$project":{"_idProductosFavs":"$_id.idProducto","_id":0}},{"$lookup":{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+    pipeline=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idCliente":id_usuario,"idProducto":id_producto},"cantidadProductosPedidosPorUsuario":{"$sum":pedido_cantidad}}},{filtrar:{id_cliente:ObjectId(idCliente)}},{ordenar:SON([("cantidadProductosPedidosPorUsuario",-1)])},{project_call:{"_idProductosFavs":id_producto_usuario,"_id":0}},{combinar_coleciones:{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
     productosSolicitadosMasComprados=list(db.Pedidos.aggregate(pipeline))
-    pipeline2=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idProducto":"$detallePedido.idProducto"},"cantidadVecesPedido":{"$sum":"$detallePedido.cantidad"}}},{"$sort":SON([("cantidadVecesPedido",-1)])},{"$limit":9},{"$lookup":{"from":"Productos","localField":"_id.idProducto","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+    pipeline2=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idProducto":id_producto},"cantidadVecesPedido":{"$sum":pedido_cantidad}}},{ordenar:SON([("cantidadVecesPedido",-1)])},{limite:9},{combinar_coleciones:{"from":"Productos","localField":id_producto_dentro,"foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
     productosSolicitadosMasVendidos=list(db.Pedidos.aggregate(pipeline2))
-    return render_template('index.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
+    return render_template(index_html,categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
             
     
 
 @app.route('/indexAdmin') 
 def indexAdmin():
     productosSolicitadosTodos=list(db.Productos.find())
-    return render_template('indexAdmin.html',productosRecibidosTodos=productosSolicitadosTodos)
+    return render_template(indexAdmin_html,productosRecibidosTodos=productosSolicitadosTodos)
 
 @app.route('/') 
 def inicio():
     productosSolicitadosTodos=list(db.Productos.find())
-    pipeline=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idCliente":"$idUsuario","idProducto":"$detallePedido.idProducto"},"cantidadProductosPedidosPorUsuario":{"$sum":"$detallePedido.cantidad"}}},{"$match":{"_id.idCliente":ObjectId("637ad222cca958ea8f837c20")}},{"$sort":SON([("cantidadProductosPedidosPorUsuario",-1)])},{"$project":{"_idProductosFavs":"$_id.idProducto","_id":0}},{"$lookup":{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+    pipeline=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idCliente":id_usuario,"idProducto":id_producto},"cantidadProductosPedidosPorUsuario":{"$sum":pedido_cantidad}}},{filtrar:{id_cliente:ObjectId("637ad222cca958ea8f837c20")}},{ordenar:SON([("cantidadProductosPedidosPorUsuario",-1)])},{project_call:{"_idProductosFavs":id_producto_usuario,"_id":0}},{combinar_coleciones:{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
     productosSolicitadosMasComprados=list(db.Pedidos.aggregate(pipeline))
-    pipeline2=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idProducto":"$detallePedido.idProducto"},"cantidadVecesPedido":{"$sum":"$detallePedido.cantidad"}}},{"$sort":SON([("cantidadVecesPedido",-1)])},{"$limit":9},{"$lookup":{"from":"Productos","localField":"_id.idProducto","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+    pipeline2=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idProducto":id_producto},"cantidadVecesPedido":{"$sum":pedido_cantidad}}},{ordenar:SON([("cantidadVecesPedido",-1)])},{limite:9},{combinar_coleciones:{"from":"Productos","localField":id_producto_dentro,"foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
     productosSolicitadosMasVendidos=list(db.Pedidos.aggregate(pipeline2))
     return render_template('inicio.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
 
@@ -145,7 +175,7 @@ def irLogin():
 @app.route('/productosPorCategoria/<categoriaSolicitada>')
 def productosPorCategoria(categoriaSolicitada):
     a = 0
-    pipeline=[{"$match":{"categoria":categoriaSolicitada}}]
+    pipeline=[{filtrar:{"categoria":categoriaSolicitada}}]
     productosSolicitados=list(db.Productos.aggregate(pipeline))
     correoCliente = str(session['usuario'])
     for i in productosSolicitados:
@@ -153,14 +183,14 @@ def productosPorCategoria(categoriaSolicitada):
     if a !=  0:
         return render_template('productosPorCategoria.html',productosRecibidos=productosSolicitados, correoClienteRecibido = correoCliente)
     else:
-        return render_template('exceptionGeneral.html', error="No existen productos de esa categoria")
+        return render_template(exception_html, error="No existen productos de esa categoria")
 
 
 
 @app.route('/verDetalleDeProducto/<_idSolicitado>')
 def verDetalleDeProducto(_idSolicitado):
     
-    pipeline=[{"$match":{"_id":ObjectId(_idSolicitado)}}]
+    pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline)))[0]
     
     
@@ -168,17 +198,17 @@ def verDetalleDeProducto(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2 = [{"$unwind":"$productos"},{"$match":{"idCliente":ObjectId(idCliente),"productos.idProducto" :ObjectId(_idSolicitado)}}]
+    pipeline2 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline2)))
     
     
-    return render_template('verDetalleDeProducto.html',productoRecibido=productoSolicitado, estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente)
+    return render_template(detalleProducto_html,productoRecibido=productoSolicitado, estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente)
 
 
 
 @app.route('/success')
 def success():
-    return render_template('success.html')
+    return render_template(success_html)
 @app.route('/irNuevaCuenta')
 def irNuevaCuenta():
     return render_template('/nuevaCuenta.html')
@@ -228,7 +258,7 @@ def modificadorDeProductoEnCatalogo():
 @app.route('/eliminadorProductoDelCatalogo/<id>')
 def eliminadorProductoDelCatalogo(id):
     productos.delete_one({"_id":ObjectId(id)})
-    return render_template('success.html')
+    return render_template(success_html)
 
 
 ##############################################################################
@@ -256,7 +286,7 @@ def eliminarDeCarrito(idP):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
     
-    pipeline = [{"$unwind":"$productos"},{"$match":{"idCliente":ObjectId(idCliente),"productos.idProducto":ObjectId(idP)}},{"$project":{"_id":False,"idProducto":"$productos.idProducto" ,"cantidad":"$productos.cantidad","subtotal":"$productos.subtotal"}}]
+    pipeline = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos:ObjectId(idP)}},{project_call:{"_id":False,"idProducto":"$productos.idProducto" ,"cantidad":"$productos.cantidad","subtotal":productos_subtotal}}]
     obtenerParametros = (list(db.Carrito.aggregate(pipeline)))
     
 
@@ -272,11 +302,11 @@ def verCarrito():
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
     
-    pipeline=[{"$match":{"idCliente":ObjectId(idCliente)}},{"$unwind":"$productos"},{"$lookup":{"from": "Productos","localField": "productos.idProducto","foreignField": "_id", "as": "extension"}},{"$unwind":"$extension"},{"$project":{"_id":False,"idProducto":"$productos.idProducto","nombre":"$extension.nombre","categoria":"$extension.categoria","cantidad":"$productos.cantidad","subtotal":"$productos.subtotal"}}]
+    pipeline=[{filtrar:{"idCliente":ObjectId(idCliente)}},{descomponer_array:llamado_productos},{combinar_coleciones:{"from": "Productos","localField": llamado_id_productos,"foreignField": "_id", "as": "extension"}},{descomponer_array:"$extension"},{project_call:{"_id":False,"idProducto":"$productos.idProducto","nombre":"$extension.nombre","categoria":"$extension.categoria","cantidad":"$productos.cantidad","subtotal":productos_subtotal}}]
     
     productosEnCarrito=list(db.Carrito.aggregate(pipeline))
     
-    pipeline2=[{"$match":{"idCliente":ObjectId(idCliente)}},{"$unwind":"$productos"},{"$group":{"_id":"$idCliente","total":{"$sum":"$productos.subtotal"}}}]
+    pipeline2=[{filtrar:{"idCliente":ObjectId(idCliente)}},{descomponer_array:llamado_productos},{agrupar:{"_id":"$idCliente","total":{"$sum":productos_subtotal}}}]
     total = float(list(db.Carrito.aggregate(pipeline2))[0].get('total'))
     
     
@@ -287,7 +317,7 @@ def verCarrito():
 def agregarAFavs(_idSolicitado):
     a = 0
    # print(session.get('usuario'))
-    pipeline = [{"$unwind": "$favoritos"},{"$match": {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
+    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
     estaEnFavoritosDeUsuario = usuarios.aggregate(pipeline)
     
     
@@ -295,11 +325,11 @@ def agregarAFavs(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2=[{"$match":{"_id":ObjectId(_idSolicitado)}}]
+    pipeline2=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline2)))[0]
     
     
-    pipeline3 = [{"$unwind":"$productos"},{"$match":{"idCliente":ObjectId(idCliente),"productos.idProducto" :ObjectId(_idSolicitado)}}]
+    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline3)))
     
     for element in estaEnFavoritosDeUsuario:
@@ -309,9 +339,9 @@ def agregarAFavs(_idSolicitado):
         filter = {'email': email}
         newvalues = { "$push": { 'favoritos': ObjectId(_idSolicitado) } }
         res = usuarios.update_one(filter, newvalues)
-        return render_template('verDetalleDeProducto.html',productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message= "Producto añadido a favoritos exitosamente.")
+        return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message= "Producto añadido a favoritos exitosamente.")
     elif a > 0:
-        return render_template('verDetalleDeProducto.html',productoRecibido=productoSolicitado, error=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Este producto ya fue añadido previamente.")
+        return render_template(detalleProducto_html,productoRecibido=productoSolicitado, error=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Este producto ya fue añadido previamente.")
 ####################################
 
 
@@ -321,7 +351,7 @@ def agregarAFavs(_idSolicitado):
 def eliminarDeFavs(_idSolicitado):
     a = 0
    # print(session.get('usuario'))
-    pipeline = [{"$unwind": "$favoritos"},{"$match": {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
+    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
     estaEnFavoritosDeUsuario = usuarios.aggregate(pipeline)
     
     
@@ -329,11 +359,11 @@ def eliminarDeFavs(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2=[{"$match":{"_id":ObjectId(_idSolicitado)}}]
+    pipeline2=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline2)))[0]
     
     
-    pipeline3 = [{"$unwind":"$productos"},{"$match":{"idCliente":ObjectId(idCliente),"productos.idProducto" :ObjectId(_idSolicitado)}}]
+    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline3)))
     
     for element in estaEnFavoritosDeUsuario:
@@ -343,9 +373,9 @@ def eliminarDeFavs(_idSolicitado):
         filter = {'email': email}
         newvalues = { "$pull": { 'favoritos': ObjectId(_idSolicitado) } }
         res = usuarios.update_one(filter, newvalues)
-        return render_template('verDetalleDeProducto.html',productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Producto eliminado de favoritos correctamente.")
+        return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Producto eliminado de favoritos correctamente.")
     elif a == 0:
-        return render_template('verDetalleDeProducto.html',productoRecibido=productoSolicitado, info=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="El producto no se encuentra en favoritos")
+        return render_template(detalleProducto_html,productoRecibido=productoSolicitado, info=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="El producto no se encuentra en favoritos")
 ####################################
 
     
@@ -384,7 +414,7 @@ def vaciarCarrito():
     if correoCliente=="admin":
        
         productosSolicitadosTodos=list(db.Productos.find())
-        return render_template('indexAdmin.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos)
+        return render_template(indexAdmin_html, categorias=categoriasDelPrograma, productosRecibidosTodos=productosSolicitadosTodos)
     
         
         
@@ -394,11 +424,11 @@ def vaciarCarrito():
         consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
         idCliente = consultaCliente[0].get('_id')
         productosSolicitadosTodos=list(db.Productos.find())
-        pipeline=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idCliente":"$idUsuario","idProducto":"$detallePedido.idProducto"},"cantidadProductosPedidosPorUsuario":{"$sum":"$detallePedido.cantidad"}}},{"$match":{"_id.idCliente":ObjectId(idCliente)}},{"$sort":SON([("cantidadProductosPedidosPorUsuario",-1)])},{"$project":{"_idProductosFavs":"$_id.idProducto","_id":0}},{"$lookup":{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+        pipeline=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idCliente":id_usuario,"idProducto":id_producto},"cantidadProductosPedidosPorUsuario":{"$sum":pedido_cantidad}}},{filtrar:{id_cliente:ObjectId(idCliente)}},{ordenar:SON([("cantidadProductosPedidosPorUsuario",-1)])},{project_call:{"_idProductosFavs":id_producto_usuario,"_id":0}},{combinar_coleciones:{"from":"Productos","localField":"_idProductosFavs","foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
         productosSolicitadosMasComprados=list(db.Pedidos.aggregate(pipeline))
-        pipeline2=[{"$unwind":"$detallePedido"},{"$group":{"_id":{"idProducto":"$detallePedido.idProducto"},"cantidadVecesPedido":{"$sum":"$detallePedido.cantidad"}}},{"$sort":SON([("cantidadVecesPedido",-1)])},{"$limit":9},{"$lookup":{"from":"Productos","localField":"_id.idProducto","foreignField":"_id","as":"union"}},{"$unwind":"$union"},{"$project":{"_id":"$union._id","nombre":"$union.nombre","categoria":"$union.categoria","precio":"$union.precio","descripcion":"$union.descripcion"}}]
+        pipeline2=[{descomponer_array:detalle_pedido},{agrupar:{"_id":{"idProducto":id_producto},"cantidadVecesPedido":{"$sum":pedido_cantidad}}},{ordenar:SON([("cantidadVecesPedido",-1)])},{limite:9},{combinar_coleciones:{"from":"Productos","localField":id_producto_dentro,"foreignField":"_id","as":"union"}},{descomponer_array:unir},{project_call:{"_id":unir_id,"nombre":union_nombre,"categoria":union_categoria,"precio":unir_precio,"descripcion":unir_descripcion}}]
         productosSolicitadosMasVendidos=list(db.Pedidos.aggregate(pipeline2))
-        return render_template('index.html',categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
+        return render_template(index_html,categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
      
 @app.route('/checkOut/<total>')
 def checkOut(total):
@@ -409,7 +439,7 @@ def checkOut(total):
     
      
         
-    pipeline=[{"$match":{"idCliente":ObjectId(idCliente)}},{"$lookup":{"from":"Usuarios","localField":"idCliente","foreignField":"_id","as": "extension" }},{"$unwind":"$extension"},{"$project":{"_id":False,"idCliente":True,"nombre":"$extension.nombre","apellido":"$extension.apellido","email":"$extension.email","celular":"$extension.celular","direccion":"$extension.direccion","productos":True}}]
+    pipeline=[{filtrar:{"idCliente":ObjectId(idCliente)}},{combinar_coleciones:{"from":"Usuarios","localField":"idCliente","foreignField":"_id","as": "extension" }},{descomponer_array:"$extension"},{project_call:{"_id":False,"idCliente":True,"nombre":"$extension.nombre","apellido":"$extension.apellido","email":"$extension.email","celular":"$extension.celular","direccion":"$extension.direccion","productos":True}}]
     resumenDePedido = list(db.Carrito.aggregate(pipeline))[0]
     
     
@@ -438,7 +468,7 @@ def realizarPedido(total):
         db.Pedidos.insert_one({"idProducto":ObjectId(idCliente), "fechaHora":fechaHora, "nota":nota, "tipoDePago":tipoDePago, "detallePedido":detallePedido, "montoTotal":montoTotal })
         db.Carrito.delete_one({"idCliente":ObjectId(idCliente)})
         
-        return render_template('success.html')
+        return render_template(success_html)
 
 #################### DEL ALE 2 ###############################################
 @app.route('/mostrarClientes')
@@ -456,7 +486,7 @@ def mostrarClientes():
 
 @app.route('/verCuenta/<_idSolicitado>')
 def verCuenta(_idSolicitado):
-    pipeline=[{"$match":{"_id":ObjectId(_idSolicitado)}}]
+    pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     usuarioSolicitado=(list(db.Usuarios.aggregate(pipeline)))[0]
     
     clientess =  usuarios.find({})
@@ -470,7 +500,7 @@ def verCuenta(_idSolicitado):
 
 @app.route('/verMiCuenta')
 def verMiCuenta():
-    pipeline=[{"$match":{"email":session.get("usuario")}}]
+    pipeline=[{filtrar:{"email":session.get("usuario")}}]
     usuarioSolicitado=(list(db.Usuarios.aggregate(pipeline)))[0]
 
     clientess =  usuarios.find({})
