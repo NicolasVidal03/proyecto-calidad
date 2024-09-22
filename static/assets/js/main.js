@@ -19,12 +19,12 @@
   
     /*==================================================================
     [ Validate ]*/
-    var input = $('.validate-input .input100');
+    const input = $('.validate-input .input100');
 
     $('.validate-form').on('submit',function(){
-        var check = true;
+        let check = true;
 
-        for(var i=0; i<input.length; i++) {
+        for(let i=0; i<input.length; i++) {
             if(validate(input[i]) == false){
                 showValidate(input[i]);
                 check=false;
@@ -55,20 +55,20 @@
     }
 
     function showValidate(input) {
-        var thisAlert = $(input).parent();
+        const thisAlert = $(input).parent();
 
         $(thisAlert).addClass('alert-validate');
     }
 
     function hideValidate(input) {
-        var thisAlert = $(input).parent();
+        const thisAlert = $(input).parent();
 
         $(thisAlert).removeClass('alert-validate');
     }
     
     /*==================================================================
     [ Show pass ]*/
-    var showPass = 0;
+    let showPass = 0;
     $('.btn-show-pass').on('click', function(){
         if(showPass == 0) {
             $(this).next('input').attr('type','text');
