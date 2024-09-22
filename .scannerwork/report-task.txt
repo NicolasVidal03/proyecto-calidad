@@ -1,4 +1,4 @@
-projectKey=proyecto-calidad
+projectKey=v2
 serverUrl=http://localhost:9000
 serverVersion=10.6.0.92116
 dashboardUrl=http://localhost:9000/dashboard?id=proyecto-calidad
