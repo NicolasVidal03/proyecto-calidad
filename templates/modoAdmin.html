@@ -1,4 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>
+            Modo Administrador
+        </title>
+    </head>
     {% for producto in productosRecibidosTodos %}
             <p> Nombre:{{producto.nombre}}----Precio:{{producto.precio}}----<a  href="/verDetalleDeProducto/{{ producto._id }}" >Ver detalles</a>----<a  href="/modificarProductoDelCatalogo/{{ producto._id }}" >Modificar</a>----<a  href="/eliminadorProductoDelCatalogo/{{ producto._id }}" >Eliminar</a></p> 
     {% endfor %}
