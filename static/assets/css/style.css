@@ -102,7 +102,7 @@ h2 {
   border: 2px solid #ccc; }
 
 .control__indicator:after {
-  font-family: 'icomoon';
+  font-family: 'icomoon', sans-serif;
   content: '\e5ca';
   position: absolute;
   display: none; }
