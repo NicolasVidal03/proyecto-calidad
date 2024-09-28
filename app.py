@@ -12,7 +12,6 @@ from bson import ObjectId
 from pymongo import MongoClient
 from bson.son import SON
 from dotenv import load_dotenv
-from flask_wtf.csrf import CSRFProtect
 
 from datetime import datetime
 import os
