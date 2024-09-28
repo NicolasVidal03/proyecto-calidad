@@ -20,9 +20,6 @@ import os
 
 load_dotenv()
 app = Flask(__name__)
-csrf = CSRFProtect()
-csrf.init_app(app)
-app.config['key'] = os.getenv('key')
 categoriasDelPrograma=["Lacteos","Bebida","Cereales","Galleta"]
 client = MongoClient("mongodb://localhost:27017")
 db = client["MyPROYECTO"]
