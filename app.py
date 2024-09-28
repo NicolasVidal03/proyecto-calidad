@@ -335,9 +335,9 @@ def agregar_a_favs(_idSolicitado):
         a = a + 1
     if a == 0:
         email = session.get("usuario")
-        filterEmail = {'email': email}
+        filter_email = {'email': email}
         newvalues = { "$push": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filterEmail, newvalues)
+        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message= "Producto añadido a favoritos exitosamente.")
     elif a > 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, error=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Este producto ya fue añadido previamente.")
@@ -369,9 +369,9 @@ def eliminar_de_favs(_idSolicitado):
         a = a + 1
     if a != 0:
         email = session.get("usuario")
-        filterEmail = {'email': email}
+        filter_email = {'email': email}
         newvalues = { "$pull": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filterEmail, newvalues)
+        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Producto eliminado de favoritos correctamente.")
     elif a == 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, info=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="El producto no se encuentra en favoritos")
