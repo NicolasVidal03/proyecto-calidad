@@ -64,13 +64,16 @@
   }
   .gear.one {
     left: -130px;
+    -webkit-animation: anticlockwiseErrorStop 2s linear infinite;
   }
   .gear.two {
     top: -75px;
+    -webkit-animation: anticlockwiseError 2s linear infinite;
   }
   .gear.three {
     top: -235px;
     left: 130px;
+    -webkit-animation: clockwiseError 2s linear infinite;
   }
   .gear .bar {
     position: absolute; left: -15px; top: 50%;
@@ -122,15 +125,6 @@
     40% { -webkit-transform: rotate(-25deg);}
     60% { -webkit-transform: rotate(-30deg);}
     100% { -webkit-transform: rotate(0deg);}
-  }
-  .gear.one {
-    -webkit-animation: anticlockwiseErrorStop 2s linear infinite;
-  }
-  .gear.two {
-    -webkit-animation: anticlockwiseError 2s linear infinite;
-  }
-  .gear.three {
-    -webkit-animation: clockwiseError 2s linear infinite;
   }
   .loading .gear.one, .loading .gear.three {
     -webkit-animation: clockwise 3s linear infinite;
