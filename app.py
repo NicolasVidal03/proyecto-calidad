@@ -12,7 +12,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from bson.son import SON
 from dotenv import load_dotenv
-
+from flask_wtf.csrf import CSRFProtect
 
 from datetime import datetime
 import os
@@ -20,6 +20,9 @@ import os
 
 load_dotenv()
 app = Flask(__name__)
+csrf = CSRFProtect()
+csrf.init_app(app)
+app.config['key'] = os.getenv('key')
 categoriasDelPrograma=["Lacteos","Bebida","Cereales","Galleta"]
 client = MongoClient("mongodb://localhost:27017")
 db = client["MyPROYECTO"]
