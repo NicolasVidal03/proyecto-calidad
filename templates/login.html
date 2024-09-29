@@ -13,6 +13,7 @@
         <a href="index.html">Atras</a>
     </div>
     <form action = "/validarCuenta" method = "POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="principal">
         <div>
             <img src="/sources/logoEliana.png" alt="" >

@@ -43,6 +43,7 @@
             <a href="javascript: history.go(-1)">Atrás</a>
         </div>
         <form action = "/actionRegistrarCuenta" method = "POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="principal">
                 <div class="inputs">
                     <table >

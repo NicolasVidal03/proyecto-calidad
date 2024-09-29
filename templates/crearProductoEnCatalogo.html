@@ -13,6 +13,7 @@
     <div class="principal">
         <h1>Agregar Productos</h1>
         <form action = "http://127.0.0.1:5000/registradorDeProductoEnCatalogo" method = "POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="inputs">
                 <div>
                     <span>Ingrese el nombre del producto: </span>

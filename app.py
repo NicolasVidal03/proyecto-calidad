@@ -12,6 +12,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from bson.son import SON
 from dotenv import load_dotenv
+from flask_wtf import CSRFProtect
 
 from datetime import datetime
 import os
@@ -19,6 +20,9 @@ import os
 
 load_dotenv()
 app = Flask(__name__)
+app.config[os.getenv('valor')] = os.getenv('key')
+csrf = CSRFProtect(app)
+
 categoriasDelPrograma=["Lacteos","Bebida","Cereales","Galleta"]
 client = MongoClient("mongodb://localhost:27017")
 db = client["MyPROYECTO"]
@@ -27,7 +31,6 @@ productos=db["Productos"]
 pedidos=db["Pedidos"]
 carrito=db["Carrito"]
 
-app.config[os.getenv('valor')] = os.getenv('key')
 
 exception_html = "exceptionGeneral.html"
 indexAdmin_html = "indexAdmin.html"
@@ -71,7 +74,6 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.route('/actionRegistrarCuenta', methods=['POST'])
 def action_registrar_cuenta():
-    resultat = request.form
     nombre = request.values.get("nombre")
     apellido = request.values.get("apellido")
     email = request.values.get("email")
@@ -171,10 +173,10 @@ def inicio():
 @app.route('/irLogin')
 def ir_login():
     return render_template('login.html')
-@app.route('/productosPorCategoria/<categoriaSolicitada>')
-def productos_por_categoria(categoriaSolicitada):
+@app.route('/productosPorCategoria/<categoria_solicitada>')
+def productos_por_categoria(categoria_solicitada):
     a = 0
-    pipeline=[{filtrar:{"categoria":categoriaSolicitada}}]
+    pipeline=[{filtrar:{"categoria":categoria_solicitada}}]
     productosSolicitados=list(db.Productos.aggregate(pipeline))
     correoCliente = str(session['usuario'])
     for i in productosSolicitados:
@@ -186,10 +188,10 @@ def productos_por_categoria(categoriaSolicitada):
 
 
 
-@app.route('/verDetalleDeProducto/<_idSolicitado>')
-def ver_detalle_de_producto(_idSolicitado):
+@app.route('/verDetalleDeProducto/<id_solicitado>')
+def ver_detalle_de_producto(id_solicitado):
     
-    pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
+    pipeline=[{filtrar:{"_id":ObjectId(id_solicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline)))[0]
     
     
@@ -197,7 +199,7 @@ def ver_detalle_de_producto(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
+    pipeline2 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(id_solicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline2)))
     
     
@@ -262,8 +264,8 @@ def eliminador_producto_del_catalogo(id):
 
 ##############################################################################
 
-@app.route('/aniadirACarrito/<idP>/<precio>', methods = ['POST'])
-def aniadir_a_carrito(idP, precio):
+@app.route('/aniadirACarrito/<id_p>/<precio>', methods = ['POST'])
+def aniadir_a_carrito(id_p, precio):
     if request.method == 'POST':
         
         correoCliente = str(session['usuario'])
@@ -274,25 +276,25 @@ def aniadir_a_carrito(idP, precio):
         cantidad = request.form['cant']
         subtotal =  float(cantidad)*float(precio)
         
-        carrito.update_one({"idCliente":ObjectId(idCliente)},{ "$addToSet":{"productos": {"idProducto": ObjectId(idP), "cantidad":float(cantidad), "subtotal":float(subtotal)} } },True)
+        carrito.update_one({"idCliente":ObjectId(idCliente)},{ "$addToSet":{"productos": {"idProducto": ObjectId(id_p), "cantidad":float(cantidad), "subtotal":float(subtotal)} } },True)
         #CAMBIAR POR UN succersCarrito
-        return render_template('successCarrito.html',idProductoPedido=idP,mensaje="Se agrego el producto al carrito")
+        return render_template('successCarrito.html',idProductoPedido=id_p,mensaje="Se agrego el producto al carrito")
         
     
-@app.route('/eliminarDeCarrito/<idP>')
-def eliminar_de_carrito(idP):
+@app.route('/eliminarDeCarrito/<id_p>')
+def eliminar_de_carrito(id_p):
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
     
-    pipeline = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos:ObjectId(idP)}},{project_call:{"_id":False,"idProducto":"$productos.idProducto" ,"cantidad":"$productos.cantidad","subtotal":productos_subtotal}}]
+    pipeline = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos:ObjectId(id_p)}},{project_call:{"_id":False,"idProducto":"$productos.idProducto" ,"cantidad":"$productos.cantidad","subtotal":productos_subtotal}}]
     obtenerParametros = (list(db.Carrito.aggregate(pipeline)))
     
 
     
     db.Carrito.update_one({"idCliente":ObjectId(idCliente)},{"$pull":{"productos": obtenerParametros[0] }})
-    #CAMBIAR POR UN succersCarrito
-    return render_template('successCarrito.html',idProductoPedido=idP,mensaje="Se elimino el productod el carrito")
+    
+    return render_template('successCarrito.html',idProductoPedido=id_p,mensaje="Se elimino el productod el carrito")
 
 @app.route('/verCarrito')
 def ver_carrito():
@@ -312,11 +314,11 @@ def ver_carrito():
     return render_template('carritoDeProductos.html', productosRecibidos=productosEnCarrito, totalAPagar=total)
 
 ##############DEL ALE###############
-@app.route('/agregarProductoAFavs/<_idSolicitado>')
-def agregar_a_favs(_idSolicitado):
+@app.route('/agregarProductoAFavs/<id_solicitado>')
+def agregar_a_favs(id_solicitado):
     a = 0
    # print(session.get('usuario'))
-    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
+    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(id_solicitado)}]}}]
     estaEnFavoritosDeUsuario = usuarios.aggregate(pipeline)
     
     
@@ -324,20 +326,16 @@ def agregar_a_favs(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
+    pipeline2=[{filtrar:{"_id":ObjectId(id_solicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline2)))[0]
     
     
-    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
+    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(id_solicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline3)))
     
     for element in estaEnFavoritosDeUsuario:
         a = a + 1
     if a == 0:
-        email = session.get("usuario")
-        filter_email = {'email': email}
-        newvalues = { "$push": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message= "Producto añadido a favoritos exitosamente.")
     elif a > 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, error=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Este producto ya fue añadido previamente.")
@@ -346,11 +344,11 @@ def agregar_a_favs(_idSolicitado):
 
 
 ##############DEL ALE 3###############
-@app.route('/eliminarDeFavs/<_idSolicitado>')
-def eliminar_de_favs(_idSolicitado):
+@app.route('/eliminarDeFavs/<id_solicitado>')
+def eliminar_de_favs(id_solicitado):
     a = 0
    # print(session.get('usuario'))
-    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
+    pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(id_solicitado)}]}}]
     estaEnFavoritosDeUsuario = usuarios.aggregate(pipeline)
     
     
@@ -358,20 +356,16 @@ def eliminar_de_favs(_idSolicitado):
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
         
-    pipeline2=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
+    pipeline2=[{filtrar:{"_id":ObjectId(id_solicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline2)))[0]
     
     
-    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(_idSolicitado)}}]
+    pipeline3 = [{descomponer_array:llamado_productos},{filtrar:{"idCliente":ObjectId(idCliente),llamado_id_productos :ObjectId(id_solicitado)}}]
     enCarrito = len(list(db.Carrito.aggregate(pipeline3)))
     
     for element in estaEnFavoritosDeUsuario:
         a = a + 1
     if a != 0:
-        email = session.get("usuario")
-        filter_email = {'email': email}
-        newvalues = { "$pull": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Producto eliminado de favoritos correctamente.")
     elif a == 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, info=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="El producto no se encuentra en favoritos")
@@ -483,9 +477,9 @@ def mostrar_clientes():
 
 ###################### DEL ALE 4 ###############################################
 
-@app.route('/verCuenta/<_idSolicitado>')
-def ver_cuenta(_idSolicitado):
-    pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
+@app.route('/verCuenta/<id_solicitado>')
+def ver_cuenta(id_solicitado):
+    pipeline=[{filtrar:{"_id":ObjectId(id_solicitado)}}]
     usuarioSolicitado=(list(db.Usuarios.aggregate(pipeline)))[0]
     
     clientess =  usuarios.find({})

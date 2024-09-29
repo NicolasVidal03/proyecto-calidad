@@ -17,6 +17,7 @@
         </div>
         <h2>Sus datos:</h2>
         <form action="/realizarPedido/{{total}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="cuerpo">
             <div class="datos-usuario">
                 <div><span class="tit">Nombre: </span> <span> {{resumenPedido.nombre}}</span></div>

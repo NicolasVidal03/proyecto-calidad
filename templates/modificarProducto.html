@@ -15,6 +15,7 @@
         <form action = "http://127.0.0.1:5000/modificadorDeProductoEnCatalogo" method = "POST">
             <div class="inputs">
             <input type = "hidden" name = "ip" value="{{productoRecibidoModificar._id}}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div>
                     <span>Ingrese el nombre del producto: </span>
                     <input type="text" class="username" name="np" value="{{productoRecibidoModificar.nombre}}">
