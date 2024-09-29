@@ -80,9 +80,6 @@ main{
 .cuerpo{
     display: flex;
     flex-direction: column;
-    /* background-color: red; */
-
-    /* justify-content: center; */
 }
 .cuerpo .cuerpo-filas{
     display: flex;

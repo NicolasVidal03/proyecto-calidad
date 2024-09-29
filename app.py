@@ -70,7 +70,7 @@ class JSONEncoder(json.JSONEncoder):
 
 
 @app.route('/actionRegistrarCuenta', methods=['POST'])
-def actionRegistrarCuenta():
+def action_registrar_cuenta():
     resultat = request.form
     nombre = request.values.get("nombre")
     apellido = request.values.get("apellido")
@@ -97,7 +97,7 @@ def actionRegistrarCuenta():
     
 
 @app.route('/validarCuenta', methods=['POST'])
-def validarCuenta():
+def validar_cuenta():
     email = request.values.get("Correo")
     contrasenia = request.values.get("Contrasenia")
     if email == "admin" and contrasenia == "erslce":
@@ -153,7 +153,7 @@ def index():
     
 
 @app.route('/indexAdmin') 
-def indexAdmin():
+def index_admin():
     productosSolicitadosTodos=list(db.Productos.find())
     return render_template(indexAdmin_html,productosRecibidosTodos=productosSolicitadosTodos)
 
@@ -169,10 +169,10 @@ def inicio():
 
 
 @app.route('/irLogin')
-def irLogin():
+def ir_login():
     return render_template('login.html')
 @app.route('/productosPorCategoria/<categoriaSolicitada>')
-def productosPorCategoria(categoriaSolicitada):
+def productos_por_categoria(categoriaSolicitada):
     a = 0
     pipeline=[{filtrar:{"categoria":categoriaSolicitada}}]
     productosSolicitados=list(db.Productos.aggregate(pipeline))
@@ -187,7 +187,7 @@ def productosPorCategoria(categoriaSolicitada):
 
 
 @app.route('/verDetalleDeProducto/<_idSolicitado>')
-def verDetalleDeProducto(_idSolicitado):
+def ver_detalle_de_producto(_idSolicitado):
     
     pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     productoSolicitado=(list(db.Productos.aggregate(pipeline)))[0]
@@ -209,16 +209,16 @@ def verDetalleDeProducto(_idSolicitado):
 def success():
     return render_template(success_html)
 @app.route('/irNuevaCuenta')
-def irNuevaCuenta():
+def ir_nueva_cuenta():
     return render_template('/nuevaCuenta.html')
 #CATALOGO
 @app.route('/crearProductoEnCatalogo')
-def crearProductoEnCatalogo():
+def crear_producto_en_catalogo():
     return render_template('crearProductoEnCatalogo.html',categoriasRecibidas=categoriasDelPrograma)
 
 
 @app.route('/registradorDeProductoEnCatalogo',methods = ['POST'])
-def registradorDeProductoEnCatalogo():
+def registrador_de_producto_en_catalogo():
     if request.method == 'POST':
         
         nombreP = request.form['np']
@@ -232,17 +232,17 @@ def registradorDeProductoEnCatalogo():
         print("Id:",x.inserted_id)
         return redirect(url_for('success'))
 @app.route('/verCatalogoCompleto')
-def verCatalogoCompleto():
+def ver_catalogo_completo():
     productosSolicitados=list(db.Productos.find())
     return render_template('productosPorCategoria.html',productosRecibidos=productosSolicitados)
 
 @app.route('/modificarProductoDelCatalogo/<id>')
-def modificarProductoDelCatalogo(id):
+def modificar_producto_del_catalogo(id):
     productoSolicitadoModificar=list(db.Productos.find({"_id":ObjectId(id)}))[0]
     return render_template('modificarProducto.html',productoRecibidoModificar=productoSolicitadoModificar,categoriasRecibidas=categoriasDelPrograma)
 
 @app.route('/modificadorDeProductoEnCatalogo',methods = ['POST'])
-def modificadorDeProductoEnCatalogo():
+def modificador_de_producto_en_catalogo():
     if request.method == 'POST':
         _idP=request.form['ip']
         nombreP = request.form['np']
@@ -255,7 +255,7 @@ def modificadorDeProductoEnCatalogo():
         return redirect(url_for('success'))
     
 @app.route('/eliminadorProductoDelCatalogo/<id>')
-def eliminadorProductoDelCatalogo(id):
+def eliminador_producto_del_catalogo(id):
     productos.delete_one({"_id":ObjectId(id)})
     return render_template(success_html)
 
@@ -263,7 +263,7 @@ def eliminadorProductoDelCatalogo(id):
 ##############################################################################
 
 @app.route('/aniadirACarrito/<idP>/<precio>', methods = ['POST'])
-def aniadirACarrito(idP, precio):
+def aniadir_a_carrito(idP, precio):
     if request.method == 'POST':
         
         correoCliente = str(session['usuario'])
@@ -280,7 +280,7 @@ def aniadirACarrito(idP, precio):
         
     
 @app.route('/eliminarDeCarrito/<idP>')
-def eliminarDeCarrito(idP):
+def eliminar_de_carrito(idP):
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
@@ -295,7 +295,7 @@ def eliminarDeCarrito(idP):
     return render_template('successCarrito.html',idProductoPedido=idP,mensaje="Se elimino el productod el carrito")
 
 @app.route('/verCarrito')
-def verCarrito():
+def ver_carrito():
     
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
@@ -313,7 +313,7 @@ def verCarrito():
 
 ##############DEL ALE###############
 @app.route('/agregarProductoAFavs/<_idSolicitado>')
-def agregarAFavs(_idSolicitado):
+def agregar_a_favs(_idSolicitado):
     a = 0
    # print(session.get('usuario'))
     pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
@@ -335,9 +335,9 @@ def agregarAFavs(_idSolicitado):
         a = a + 1
     if a == 0:
         email = session.get("usuario")
-        filter = {'email': email}
+        filter_email = {'email': email}
         newvalues = { "$push": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filter, newvalues)
+        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message= "Producto añadido a favoritos exitosamente.")
     elif a > 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, error=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Este producto ya fue añadido previamente.")
@@ -347,7 +347,7 @@ def agregarAFavs(_idSolicitado):
 
 ##############DEL ALE 3###############
 @app.route('/eliminarDeFavs/<_idSolicitado>')
-def eliminarDeFavs(_idSolicitado):
+def eliminar_de_favs(_idSolicitado):
     a = 0
    # print(session.get('usuario'))
     pipeline = [{descomponer_array: "$favoritos"},{filtrar: {"$and": [{'email':session.get('usuario')}, {"favoritos": ObjectId(_idSolicitado)}]}}]
@@ -369,9 +369,9 @@ def eliminarDeFavs(_idSolicitado):
         a = a + 1
     if a != 0:
         email = session.get("usuario")
-        filter = {'email': email}
+        filter_email = {'email': email}
         newvalues = { "$pull": { 'favoritos': ObjectId(_idSolicitado) } }
-        res = usuarios.update_one(filter, newvalues)
+        res = usuarios.update_one(filter_email, newvalues)
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, exito=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="Producto eliminado de favoritos correctamente.")
     elif a == 0:
         return render_template(detalleProducto_html,productoRecibido=productoSolicitado, info=True,estaEnCarrito=enCarrito,correoClienteRecibido=correoCliente, message="El producto no se encuentra en favoritos")
@@ -401,7 +401,7 @@ def buscar():
     
         return render_template('productosBuscados.html', productosBuscadosRecibidos=productosBuscadosSolicitados,correoClienteRecibido=correoCliente)
 @app.route('/vaciarCarrito')
-def vaciarCarrito():
+def vaciar_carrito():
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
     idCliente = consultaCliente[0].get('_id')
@@ -430,7 +430,7 @@ def vaciarCarrito():
         return render_template(index_html,categorias=categoriasDelPrograma,productosRecibidosTodos=productosSolicitadosTodos,productosMasComprados=productosSolicitadosMasComprados,productosMasVendidos=productosSolicitadosMasVendidos)
      
 @app.route('/checkOut/<total>')
-def checkOut(total):
+def check_out(total):
     
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
@@ -446,7 +446,7 @@ def checkOut(total):
 
 
 @app.route('/realizarPedido/<total>', methods=['POST'])
-def realizarPedido(total):
+def realizar_pedido(total):
     
     if request.method == 'POST':
         
@@ -471,7 +471,7 @@ def realizarPedido(total):
 
 #################### DEL ALE 2 ###############################################
 @app.route('/mostrarClientes')
-def mostrarClientes():
+def mostrar_clientes():
     clientess =  usuarios.find({})
     correoCliente = str(session['usuario'])
     consultaCliente = list(db.Usuarios.find({'email':correoCliente},{'_id':1}))
@@ -484,7 +484,7 @@ def mostrarClientes():
 ###################### DEL ALE 4 ###############################################
 
 @app.route('/verCuenta/<_idSolicitado>')
-def verCuenta(_idSolicitado):
+def ver_cuenta(_idSolicitado):
     pipeline=[{filtrar:{"_id":ObjectId(_idSolicitado)}}]
     usuarioSolicitado=(list(db.Usuarios.aggregate(pipeline)))[0]
     
@@ -498,7 +498,7 @@ def verCuenta(_idSolicitado):
 ################################################################################
 
 @app.route('/verMiCuenta')
-def verMiCuenta():
+def ver_mi_cuenta():
     pipeline=[{filtrar:{"email":session.get("usuario")}}]
     usuarioSolicitado=(list(db.Usuarios.aggregate(pipeline)))[0]
 
