@@ -12,6 +12,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from bson.son import SON
 from dotenv import load_dotenv
+from flask_wtf import CSRFProtect
 
 from datetime import datetime
 import os
@@ -19,6 +20,9 @@ import os
 
 load_dotenv()
 app = Flask(__name__)
+app.config[os.getenv('valor')] = os.getenv('key')
+csrf = CSRFProtect(app)
+
 categoriasDelPrograma=["Lacteos","Bebida","Cereales","Galleta"]
 client = MongoClient("mongodb://localhost:27017")
 db = client["MyPROYECTO"]
@@ -27,7 +31,6 @@ productos=db["Productos"]
 pedidos=db["Pedidos"]
 carrito=db["Carrito"]
 
-app.config[os.getenv('valor')] = os.getenv('key')
 
 exception_html = "exceptionGeneral.html"
 indexAdmin_html = "indexAdmin.html"
@@ -71,7 +74,6 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.route('/actionRegistrarCuenta', methods=['POST'])
 def action_registrar_cuenta():
-    resultat = request.form
     nombre = request.values.get("nombre")
     apellido = request.values.get("apellido")
     email = request.values.get("email")
